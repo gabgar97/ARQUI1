@@ -37,6 +37,25 @@ int intentos = 0; // variable para contar los intentos de clave incorrecta
   para el software serial es: tx/rx del virtual 
 */
 
+
+/*ROOM'S STRUCT*/
+typedef struct {
+  int num_room;
+  bool state;
+} Room;
+
+#define NUM_ROOM 4
+
+Room rooms[NUM_ROOM]={
+  {1,false},
+  {2,false},
+  {3,false},
+  {4,false},
+};
+
+/*LIGHTS PIN*/
+
+
 SoftwareSerial console(28,27);
 void setup() {
   // put your setup code here, to run once:
@@ -49,7 +68,12 @@ void setup() {
 }
 
 void loop() {
-  while(ingresandoClave){  // ahorita no entra a este while estaba probando la clave primero pero si debe primero entrar aqui
+ 
+ /*LIGHTS CHANGE METHOD*/
+ lights_state();
+
+ 
+  /*while(ingresandoClave){  // ahorita no entra a este while estaba probando la clave primero pero si debe primero entrar aqui
     // aqui va el mensaje de inicio, ahorita empieza en pedir clave pero es de cambiar la bandera para que entre a este while
     // y con el ultrasonico cambiar la bandera para salir de este while y entrar a pedirClave()
     mensajeInicial(); // llamando a funcion con el mensaje inicial 
@@ -57,7 +81,7 @@ void loop() {
   }
   // llamar a metodo para pedir clave
   // lcd.clear();
-  pedirClave();
+  pedirClave();*/
   
 }
 
@@ -139,4 +163,32 @@ void mensajeInicial(){
   lcd.print("---------------");
   delay(1000);
   lcd.clear(); 
+}
+
+
+/*VERIFIES IF LIGHT IT'S TURNED ON*/
+void lights_state(){
+  
+  
+  for( int i=0; i < NUM_ROOM; i++){
+    change_state(i);
+    lcd.setCursor(0,0);
+    lcd.print("Room: "+String(rooms[i].num_room));
+    lcd.setCursor(0,1);
+    lcd.print(rooms[i].state);
+    delay(1000);
+  }
+  
+  
+  
+  
+}
+
+void change_state(int index){
+  int ldr= analogRead(A6);
+  if(ldr > 10){
+    rooms[1].state = true;
+  }else {
+    rooms[1].state = false;
+  }
 }
