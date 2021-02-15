@@ -34,7 +34,7 @@ String claveCorrecta = "20213";
 int intentos = 0; // variable para contar los intentos de clave incorrecta 
 
 /*
-  para el software serial es: tx/rx del virtual 
+  para el software serial es: tx/rx del virtual  adsasdadasds
 */
 
 
