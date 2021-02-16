@@ -171,14 +171,19 @@ void mensajeInicial() {
 
 /*VERIFIES IF LIGHT IT'S TURNED ON*/
 void lights_state() {
-  
+  delay(500);
   for ( int i = 0; i < NUM_ROOM; i++) {
     change_state(i);
     lcd.clear();
     lcd.setCursor(0, 0);
     lcd.print("Room: " + String(rooms[i].num_room));
     lcd.setCursor(0, 1);
-    lcd.print(rooms[i].state);
+    if(rooms[i].state==0){
+      lcd.print("light: OFF");
+    }else{
+      lcd.print("light: ON");
+    }
+    
     delay(1000);
   }
 
@@ -188,11 +193,26 @@ void lights_state() {
 }
 
 void change_state(int index) {
-  int ldr = analogRead(A6);
+  int ldr = analogRead(A6); //controller from room1
+  int ldr2 = analogRead(A7);//controller from room2
+  int ldr3 = analogRead(A8);//controller from room3
+  int ldr4 = analogRead(A9);//controller from room4
   if (ldr > 10) {
     rooms[1].state = true;
-  } else {
+  } else if(ldr < 10) {
     rooms[1].state = false;
+  }else if(ldr2>10){
+    rooms[2].state = true;
+  }else if(ldr2 < 10){
+    rooms[2].state = false;
+  }else if(ldr3>10){
+    rooms[3].state = true;
+  }else if(ldr3 < 10){
+    rooms[3].state = false;
+  }else if(ldr4>10){
+    rooms[4].state = true;
+  }else{
+    rooms[4].state = false;
   }
 }
 
