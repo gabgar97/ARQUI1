@@ -4,6 +4,8 @@
 #include <Servo.h>
 
 Servo myservo;
+// Servo de salida
+Servo servoSalida;
 
 LiquidCrystal lcd(A0, A1, A2, A3, A4, A5);
 int posServo = 0;    // variable to store the servo position
@@ -17,7 +19,12 @@ const byte COLS = 3; // 3 columnas
 
 const int trigPin = 13;  //Trig Ultrasons -> pin 13
 const int echoPin = 12;  //Echo Ultrasons -> pin 12
-long duracion, distancia;
+
+const int trigPinSalida = 14;
+const int echoPinSalida = 15;
+const int ledSalida = 17;
+
+long duracion, distancia, duracionSalida, distanciaSalida;
 
 char keys[ROWS][COLS] = {
   {'1', '2', '3'},
@@ -67,11 +74,13 @@ void setup() {
   console.begin(9600);
   pinMode(10, OUTPUT); // pin para los leds de alarma
   myservo.attach(9); // en el pin 9 esta el servo
+  servoSalida.attach(16); // en el pin 9 esta el servo
   lcd.begin(16, 2);
 
   pinMode(trigPin, OUTPUT);  //Trig
   pinMode(echoPin, INPUT);   //Echo
   myservo.write(0);
+  servoSalida.write(0);
 }
 
 void loop() {
@@ -111,6 +120,26 @@ void pedirClave() {
         lights_state();
         // aqui la clave es correcta proceder a demas funciones aqui donde la clave es correcta
 
+        UltraSonicoSalida();
+
+        /*
+          duracionSalida = pulseIn(echoPin, HIGH);
+
+          duracionSalida = duracionSalida * 340 / (2 * 10000);
+
+          if (distanciaSalida <= 150) {
+          digitalWrite(ledSalida, HIGH);
+          delay(30);
+          servoSalida.write(0);
+          delay(3000);
+          servoSalida.write(-180);
+          delay(100);
+          }
+          else {
+          digitalWrite(ledSalida, LOW);
+
+          }
+        */
 
       } else {
         lcd.clear();
@@ -178,12 +207,12 @@ void lights_state() {
     lcd.setCursor(0, 0);
     lcd.print("Room: " + String(rooms[i].num_room));
     lcd.setCursor(0, 1);
-    if(rooms[i].state==0){
+    if (rooms[i].state == 0) {
       lcd.print("light: OFF");
-    }else{
+    } else {
       lcd.print("light: ON");
     }
-    
+
     delay(1000);
   }
 
@@ -199,19 +228,19 @@ void change_state(int index) {
   int ldr4 = analogRead(A9);//controller from room4
   if (ldr > 10) {
     rooms[1].state = true;
-  } else if(ldr < 10) {
+  } else if (ldr < 10) {
     rooms[1].state = false;
-  }else if(ldr2>10){
+  } else if (ldr2 > 10) {
     rooms[2].state = true;
-  }else if(ldr2 < 10){
+  } else if (ldr2 < 10) {
     rooms[2].state = false;
-  }else if(ldr3>10){
+  } else if (ldr3 > 10) {
     rooms[3].state = true;
-  }else if(ldr3 < 10){
+  } else if (ldr3 < 10) {
     rooms[3].state = false;
-  }else if(ldr4>10){
+  } else if (ldr4 > 10) {
     rooms[4].state = true;
-  }else{
+  } else {
     rooms[4].state = false;
   }
 }
@@ -248,4 +277,33 @@ void UltraSonico() {
   }
 
   delay(500);
+}
+
+void UltraSonicoSalida() {
+
+  digitalWrite(trigPinSalida, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPinSalida, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPinSalida, LOW);
+
+  // Calculo del echo
+  duracionSalida = pulseIn(echoPin, HIGH);
+
+  duracionSalida = duracionSalida * 340 / (2 * 10000);
+
+  if (distanciaSalida <= 150) {
+    digitalWrite(ledSalida, HIGH);
+    delay(30);
+
+  }
+  else {
+    digitalWrite(ledSalida, LOW);
+  }
+
+  servoSalida.write(0);
+  delay(3000);
+  servoSalida.write(180);
+  delay(500);
+
 }
