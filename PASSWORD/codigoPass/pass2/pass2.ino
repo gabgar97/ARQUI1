@@ -120,7 +120,7 @@ void pedirClave() {
         lights_state();
         // aqui la clave es correcta proceder a demas funciones aqui donde la clave es correcta
 
-        UltraSonicoSalida();
+        
 
         /*
           duracionSalida = pulseIn(echoPin, HIGH);
@@ -207,16 +207,18 @@ void lights_state() {
     lcd.setCursor(0, 0);
     lcd.print("Room: " + String(rooms[i].num_room));
     lcd.setCursor(0, 1);
-    if (rooms[i].state == 0) {
+    /*if (rooms[i].state == 0) {
       lcd.print("light: OFF");
     } else {
       lcd.print("light: ON");
-    }
+    }*/
+
+  lcd.print(rooms[i].state);
 
     delay(1000);
   }
 
-
+UltraSonicoSalida();
 
 
 }
