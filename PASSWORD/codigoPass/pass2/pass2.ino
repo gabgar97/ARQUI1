@@ -64,6 +64,8 @@ Room rooms[NUM_ROOM] = {
   {4, false},
 };
 
+bool room_temp [NUM_ROOM] = { false,false,false,false }; 
+bool loop_again = false;
 /*LIGHTS PIN*/
 
 
@@ -204,48 +206,116 @@ void lights_state() {
   for ( int i = 0; i < NUM_ROOM; i++) {
     change_state(i);
     lcd.clear();
+    delay(300);
     lcd.setCursor(0, 0);
     lcd.print("Room: " + String(rooms[i].num_room));
     lcd.setCursor(0, 1);
-    /*if (rooms[i].state == 0) {
-      lcd.print("light: OFF");
-    } else {
-      lcd.print("light: ON");
-    }*/
-
-  lcd.print(rooms[i].state);
-
+   
+   if(rooms[i].state == false){
+       lcd.print("lights: OFF");
+    }else{
+       lcd.print("lights: ON");
+    }
     delay(1000);
   }
 
-UltraSonicoSalida();
+
+  if(Check_Again()!= false){
+    lights_state();
+  }else{
+    UltraSonicoSalida();
+  }
+
+
 
 
 }
 
 void change_state(int index) {
-  int ldr = analogRead(A6); //controller from room1
-  int ldr2 = analogRead(A7);//controller from room2
-  int ldr3 = analogRead(A8);//controller from room3
-  int ldr4 = analogRead(A9);//controller from room4
-  if (ldr > 10) {
-    rooms[1].state = true;
-  } else if (ldr < 10) {
-    rooms[1].state = false;
-  } else if (ldr2 > 10) {
-    rooms[2].state = true;
-  } else if (ldr2 < 10) {
-    rooms[2].state = false;
-  } else if (ldr3 > 10) {
-    rooms[3].state = true;
-  } else if (ldr3 < 10) {
-    rooms[3].state = false;
-  } else if (ldr4 > 10) {
-    rooms[4].state = true;
-  } else {
-    rooms[4].state = false;
+  int ldr = analogRead(A6); //controller from 341
+  
+  int ldr2 = analogRead(A7);//controller from room210
+  int ldr3 = analogRead(A8);//controller from room3171
+  int ldr4 = analogRead(A9);//controller from room410
+
+          
+  switch(index){
+
+    case 0:
+       if (ldr > 10) {
+        console.println("ENTRO1");
+          rooms[0].state = true;
+        }else{
+          console.println("ENTRO1.1");
+          rooms[0].state = false;
+       }
+  
+    break;
+        
+    case 1:
+         if (ldr2 > 10) {
+          console.println("ENTRO2");
+          rooms[1].state = true;
+        }else{
+          rooms[1].state = false;
+       }
+    break;
+    case 2:
+        if (ldr3 > 10) {
+          rooms[2].state = true;
+        }else{
+          rooms[2].state = false;
+       }
+    break;
+    case 3:
+      if (ldr4 >10) {
+          rooms[3].state = true;
+        }else{
+          rooms[3].state = false;
+       }
+    break;
+    default:
+    break;
   }
+  /*
+  if (ldr >= 10 && index==0) {
+    rooms[1].state = true;
+  } 
+  if (ldr < 10 && index==0) {
+    rooms[1].state = false;
+  }
+  if (ldr2 >= 10 && index==1) {
+    rooms[2].state = true;
+  }
+  if (ldr2 < 10 && index==1) {
+    rooms[2].state = false;
+  }
+  if (ldr3 >= 10 && index==2) {
+    rooms[3].state = true;
+  } 
+  if (ldr3 < 10 && index==2) {
+    rooms[3].state = false;
+  }
+  if (ldr4 >= 10 && index==3) {
+    rooms[4].state = true;
+  } 
+  if(ldr4 < 10 && index==3){
+    rooms[4].state = false;
+  }*/
 }
+
+bool Check_Again(){ 
+  bool change_l = false; // means not changs made in loop
+  for(int i = 0; i < NUM_ROOM; i++){ 
+    if(rooms[i].state != room_temp[i]){
+      change_l = true; 
+    }
+    room_temp[i]=rooms[i].state;
+  }
+
+  return change_l;
+  
+}//END CHECK AGAIN
 
 void UltraSonico() {
 
